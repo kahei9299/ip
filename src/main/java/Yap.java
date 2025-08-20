@@ -8,6 +8,6 @@ public class Yap {
         System.out.println("May I know what's your name?\n");
         String name = sc.nextLine();
         System.out.printf("Hi %s, how may i help you today? :D\n", name);
-        System.out.println("Alright it was nice talking to you %s! See you next time :D");
+        System.out.printf("Alright it was nice talking to you %s! See you next time :D", name);
     }
 }
