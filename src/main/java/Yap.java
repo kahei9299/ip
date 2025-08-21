@@ -33,23 +33,42 @@ public class Yap {
                     addingTasks = false;
                     System.out.println("Finished adding tasks.");
                 } else {
-                    char firstletter = input.trim().toLowerCase().charAt(0);
-                    StringBuilder taskdetails = new StringBuilder(input);
-                    String taskk = taskdetails.delete(0, 2).toString();
-                    String[] parts = taskk.split("/");
+                    try {
+                        String cleanedInput = input.trim();
+                        char firstletter = cleanedInput.toLowerCase().charAt(0);
 
-                    if (firstletter == 't') {
-                        memory.add(new ToDos(taskk));
-                        System.out.println("Added ToDo task: " + taskk);
-                    } else if (firstletter == 'd') {
-                        memory.add(new Deadlines(parts[0], parts[1]));
-                        System.out.println(("Added Deadline task: " + parts[0]));
-                    } else if (firstletter == 'e') {
-                        memory.add(new Events(parts[0], parts[1], parts[2], parts[3]));
-                        System.out.println("Added Event: " + parts[0]);
-                    }
-                    else {
-                        System.out.println("Unknown task type please re-enter based on the specified format");
+                        if (firstletter == 't') {
+                            if (cleanedInput.charAt(1) != ' ') {
+                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                            }
+                            String taskDetails = cleanedInput.substring(1).trim();
+                            memory.add(new ToDos(taskDetails));
+                            System.out.println("Added ToDo task: " + taskDetails);
+                        } else if (firstletter == 'd') {
+                            if (cleanedInput.charAt(1) != ' ') {
+                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                            }
+                            String taskDetails = cleanedInput.substring(1).trim();
+                            String[] parts = taskDetails.split("/");
+                            memory.add(new Deadlines(parts[0], parts[1]));
+                            System.out.println(("Added Deadline task: " + parts[0]));
+                        } else if (firstletter == 'e') {
+                            if (cleanedInput.charAt(1) != ' ') {
+                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                            }
+                            String taskDetails = cleanedInput.substring(1).trim();
+                            String[] parts = taskDetails.split("/");
+                            memory.add(new Events(parts[0], parts[1], parts[2], parts[3]));
+                            System.out.println("Added Event: " + parts[0]);
+                        } else {
+                            throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                        }
+                    } catch (InvalidTaskTypeException e) {
+                        System.out.println(e.getMessage());
+                    } catch (StringIndexOutOfBoundsException e) {
+                        System.out.println("Invalid input format. Please provide a task with the correct format.");
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        System.out.println("Missing task details. Please ensure all required fields are provided.");
                     }
                 }
                 continue;
@@ -107,9 +126,17 @@ public class Yap {
     }
 
     private static String read(String prompt) {
-        System.out.print(prompt);
-        String s = sc.nextLine();
-        return s == null ? "" : s.trim();
+        try {
+            System.out.print(prompt);
+            String s = sc.nextLine();
+            if (s == null || s.isBlank()) {
+                throw new IllegalArgumentException("Input cannot be empty.");
+            }
+            return s.trim();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return read(prompt);
+        }
     }
 
     private static void show(List<Task> memory, Integer taskNumber) {
@@ -151,25 +178,30 @@ public class Yap {
                 System.out.println("Completed: " + t.getName());
             }
             return;
-        } catch (NumberFormatException ignore) {
-            // not a number → fall through to name match
+        } catch (NumberFormatException e) {
         }
-        String wanted = target.trim();
-        Task curr = memory.stream()
-                .filter(t -> t.getName().equalsIgnoreCase(wanted))
-                .findFirst()
-                .orElse(null);
+        try {
+            String wanted = target.trim();
+            Task curr = memory.stream()
+                    .filter(t -> t.getName().equalsIgnoreCase(wanted))
+                    .findFirst()
+                    .orElse(null);
 
-        if (curr == null) {
-            System.out.println("Task not found: " + target);
-            return;
-        }
+            if (curr == null) {
+                System.out.println("Task not found: " + target);
+                return;
+            }
 
-        if (curr.getStatus()) {
-            System.out.println("Already completed: " + curr.getName());
-        } else {
-            curr.setStatus(true);
-            System.out.println("Completed: " + curr.getName());
+            if (curr.getStatus()) {
+                System.out.println("Already completed: " + curr.getName());
+            } else {
+                curr.setStatus(true);
+                System.out.println("Completed: " + curr.getName());
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
 
