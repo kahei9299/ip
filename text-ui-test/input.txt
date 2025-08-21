@@ -12,4 +12,8 @@ complete homework
 complete food
 show
 show 3
+delete 1
+show
+delete 2
+show
 exit

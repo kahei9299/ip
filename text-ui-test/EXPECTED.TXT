@@ -26,4 +26,9 @@ for a list of available commands, type 'help'
   2) [D][X] homework (by: 9 Aug)
   3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
 >   3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
+> Deleted task: get food
+>   1) [D][X] homework (by: 9 Aug)
+  2) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
+> Deleted task: basketball game
+>   1) [D][X] homework (by: 9 Aug)
 > Alright, it was nice talking to you kai! See you next time :D

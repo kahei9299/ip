@@ -13,6 +13,7 @@ public class Yap {
     private static final Pattern CMD_ADD  = Pattern.compile("^(add|todo)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CMD_DONE  = Pattern.compile("^(done)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CMD_COMPLETE = Pattern.compile("^complete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_DELETE = Pattern.compile("^delete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
 
@@ -101,6 +102,13 @@ public class Yap {
             if(mComplete.matches()) {
                 String s = mComplete.group(1).trim();
                 complete(memory, s);
+                continue;
+            }
+
+            var mDelete = CMD_DELETE.matcher(input);
+            if (mDelete.matches()) {
+                String s = mDelete.group(1).trim();
+                delete(memory, s);
                 continue;
             }
 
@@ -200,6 +208,39 @@ public class Yap {
             }
         } catch (NoSuchElementException e) {
             System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private static void delete(List<Task> memory, String target) {
+        if (memory.isEmpty()) {
+            System.out.println("No tasks to delete.");
+            return;
+        }
+
+        try {
+            int idx = Integer.parseInt(target);
+            if (idx < 1 || idx > memory.size()) {
+                System.out.println("Invalid task number: " + idx);
+                return;
+            }
+            Task t = memory.remove(idx - 1);
+            System.out.println("Deleted task: " + t.getName());
+            return;
+        } catch (NumberFormatException e) {
+            String wanted = target.trim();
+            Task curr = memory.stream()
+                    .filter(t -> t.getName().equalsIgnoreCase(wanted))
+                    .findFirst()
+                    .orElse(null);
+
+            if (curr == null) {
+                System.out.println("Task not found: " + target);
+                return;
+            }
+            memory.remove(curr);
+            System.out.println("Deleted task: " + curr.getName());
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
