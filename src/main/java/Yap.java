@@ -33,8 +33,24 @@ public class Yap {
                     addingTasks = false;
                     System.out.println("Finished adding tasks.");
                 } else {
-                    memory.add(new Task(input));
-                    System.out.println("Added task: " + input);
+                    char firstletter = input.trim().toLowerCase().charAt(0);
+                    StringBuilder taskdetails = new StringBuilder(input);
+                    String taskk = taskdetails.delete(0, 2).toString();
+                    String[] parts = taskk.split("/");
+
+                    if (firstletter == 't') {
+                        memory.add(new ToDos(taskk));
+                        System.out.println("Added ToDo task: " + taskk);
+                    } else if (firstletter == 'd') {
+                        memory.add(new Deadlines(parts[0], parts[1]));
+                        System.out.println(("Added Deadline task: " + parts[0]));
+                    } else if (firstletter == 'e') {
+                        memory.add(new Events(parts[0], parts[1], parts[2], parts[3]));
+                        System.out.println("Added Event: " + parts[0]);
+                    }
+                    else {
+                        System.out.println("Unknown task type please re-enter based on the specified format");
+                    }
                 }
                 continue;
             }
@@ -160,10 +176,13 @@ public class Yap {
     private static void help() {
         System.out.println("""
             Commands:
-              show         - display everything you've told me
-              show N       - display the last N entries
-              exit / quit  - leave the chat
-              add / todo   - add tasks to todolist
+              show                   - display everything you've told me
+              show N                 - display the last N entries
+              exit / quit            - leave the chat
+              add                    - add tasks to todolist
+              add todo task          - t "name"
+              add deadline task      - d "name"/"deadline"
+              add event              - e "name"/"date"/"start time"/"end time
             """);
     }
 }
