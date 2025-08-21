@@ -1,7 +1,29 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
+Hello! I'm Yap your new best friend!
+May I know what's your name? Hi kai, how may i help you today? :D
+for a list of available commands, type 'help'
+> Commands:
+  show                   - display everything you've told me
+  show N                 - display the last N entries
+  exit / quit            - leave the chat
+  add                    - add tasks to todolist
+  add todo task          - t "name"
+  add deadline task      - d "name"/"deadline"
+  add event              - e "name"/"date"/"start time"/"end time
 
+> Add mode: enter tasks one per line. Type 'done' when finished.
+> Added ToDo task: get food
+> Added Deadline task: homework
+> Added Event: basketball game
+> Unknown task type please re-enter based on the specified format
+> Finished adding tasks.
+>   1) [T][ ] get food
+  2) [D][ ] homework (by: 9 Aug)
+  3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
+> Completed: get food
+> Completed: homework
+> Task not found: food
+>   1) [T][X] get food
+  2) [D][X] homework (by: 9 Aug)
+  3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
+>   3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
+> Alright, it was nice talking to you kai! See you next time :D

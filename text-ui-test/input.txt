@@ -1,0 +1,15 @@
+kai
+help
+add
+t get food
+d homework/9 Aug
+e basketball game/10 Aug/7pm/9pm
+apple
+done
+show
+complete 1
+complete homework
+complete food
+show
+show 3
+exit
