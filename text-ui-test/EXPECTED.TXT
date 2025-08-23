@@ -9,6 +9,8 @@ for a list of available commands, type 'help'
   add todo task          - t "name"
   add deadline task      - d "name"/"deadline"
   add event              - e "name"/"date"/"start time"/"end time
+  complete task          - complete "name"/"number"
+  delete task            - delete "name"/"number"
 
 > Add mode: enter tasks one per line. Type 'done' when finished.
 > Added ToDo task: get food

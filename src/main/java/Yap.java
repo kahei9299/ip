@@ -37,32 +37,36 @@ public class Yap {
                     try {
                         String cleanedInput = input.trim();
                         char firstletter = cleanedInput.toLowerCase().charAt(0);
+                        TaskType taskType = TaskType.fromChar(firstletter);
 
-                        if (firstletter == 't') {
-                            if (cleanedInput.charAt(1) != ' ') {
-                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
-                            }
-                            String taskDetails = cleanedInput.substring(1).trim();
-                            memory.add(new ToDos(taskDetails));
-                            System.out.println("Added ToDo task: " + taskDetails);
-                        } else if (firstletter == 'd') {
-                            if (cleanedInput.charAt(1) != ' ') {
-                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
-                            }
-                            String taskDetails = cleanedInput.substring(1).trim();
-                            String[] parts = taskDetails.split("/");
-                            memory.add(new Deadlines(parts[0], parts[1]));
-                            System.out.println(("Added Deadline task: " + parts[0]));
-                        } else if (firstletter == 'e') {
-                            if (cleanedInput.charAt(1) != ' ') {
-                                throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
-                            }
-                            String taskDetails = cleanedInput.substring(1).trim();
-                            String[] parts = taskDetails.split("/");
-                            memory.add(new Events(parts[0], parts[1], parts[2], parts[3]));
-                            System.out.println("Added Event: " + parts[0]);
-                        } else {
-                            throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                        switch (taskType) {
+                            case TODO:
+                                if (cleanedInput.charAt(1) != ' ') {
+                                    throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                                }
+                                String taskDetails = cleanedInput.substring(1).trim();
+                                memory.add(new ToDos(taskDetails));
+                                System.out.println("Added ToDo task: " + taskDetails);
+                                break;
+                            case DEADLINE:
+                                if (cleanedInput.charAt(1) != ' ') {
+                                    throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                                }
+                                String deadlinetaskDetails = cleanedInput.substring(1).trim();
+                                String[] deadlineparts = deadlinetaskDetails.split("/");
+                                memory.add(new Deadlines(deadlineparts[0], deadlineparts[1]));
+                                System.out.println(("Added Deadline task: " + deadlineparts[0]));
+                                break;
+                            case EVENT:
+                                if (cleanedInput.charAt(1) != ' ') {
+                                    throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
+                                }
+                                String eventtaskDetails = cleanedInput.substring(1).trim();
+                                String[] eventparts = eventtaskDetails.split("/");
+                                memory.add(new Events(eventparts[0], eventparts[1], eventparts[2], eventparts[3]));
+                                System.out.println("Added Event: " + eventparts[0]);
+                                break;
+
                         }
                     } catch (InvalidTaskTypeException e) {
                         System.out.println(e.getMessage());
@@ -75,6 +79,8 @@ public class Yap {
                 continue;
             }
 
+                String command = input.split(" ")[0];
+                CommandType commandType = CommandType.fromString(command);
             if (CMD_ADD.matcher(input).matches()) {
                 addingTasks = true;
                 System.out.println("Add mode: enter tasks one per line. Type 'done' when finished.");
@@ -256,6 +262,8 @@ public class Yap {
               add todo task          - t "name"
               add deadline task      - d "name"/"deadline"
               add event              - e "name"/"date"/"start time"/"end time
+              complete task          - complete "name"/"number"
+              delete task            - delete "name"/"number"
             """);
     }
 }
