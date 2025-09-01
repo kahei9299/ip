@@ -1,5 +1,8 @@
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.NoSuchElementException;
 
 public class Yap {
 
@@ -15,16 +18,45 @@ public class Yap {
     private static final Pattern CMD_COMPLETE = Pattern.compile("^complete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CMD_DELETE = Pattern.compile("^delete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
 
+    private final List<Task> tasks = new ArrayList<>();
+    private final Storage storage = new Storage("data/duke.txt");
+
     public static void main(String[] args) {
+        new Yap().run();
+    }
+
+    private String ask(String prompt) {
+        while (true) {
+            String s = read(prompt + " ");
+            if (!s.isBlank()) return s.trim();
+            System.out.println("Please enter something.");
+        }
+    }
+
+    private String read(String prompt) {
+        try {
+            System.out.print(prompt);
+            String s = sc.nextLine();
+            if (s == null || s.isBlank()) {
+                throw new IllegalArgumentException("Input cannot be empty.");
+            }
+            return s.trim();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return read(prompt);
+        }
+    }
+
+    public void run() {
+
+        tasks.addAll(storage.load());
 
         System.out.printf("Hello! I'm Yap your new best friend!\n");
         String name = ask("May I know what's your name?");
         System.out.printf("Hi %s, how may i help you today? :D\n", name);
         System.out.println("for a list of available commands, type 'help' ");
 
-        List<Task> memory = new ArrayList<>();
         boolean addingTasks = false;
-
 
         while (true) {
             String input = read("> ");
@@ -45,7 +77,8 @@ public class Yap {
                                     throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
                                 }
                                 String taskDetails = cleanedInput.substring(1).trim();
-                                memory.add(new ToDos(taskDetails));
+                                tasks.add(new ToDos(taskDetails));
+                                storage.save(tasks);
                                 System.out.println("Added ToDo task: " + taskDetails);
                                 break;
                             case DEADLINE:
@@ -54,7 +87,8 @@ public class Yap {
                                 }
                                 String deadlinetaskDetails = cleanedInput.substring(1).trim();
                                 String[] deadlineparts = deadlinetaskDetails.split("/");
-                                memory.add(new Deadlines(deadlineparts[0], deadlineparts[1]));
+                                tasks.add(new Deadlines(deadlineparts[0], deadlineparts[1]));
+                                storage.save(tasks);
                                 System.out.println(("Added Deadline task: " + deadlineparts[0]));
                                 break;
                             case EVENT:
@@ -63,7 +97,8 @@ public class Yap {
                                 }
                                 String eventtaskDetails = cleanedInput.substring(1).trim();
                                 String[] eventparts = eventtaskDetails.split("/");
-                                memory.add(new Events(eventparts[0], eventparts[1], eventparts[2], eventparts[3]));
+                                tasks.add(new Events(eventparts[0], eventparts[1], eventparts[2], eventparts[3]));
+                                storage.save(tasks);
                                 System.out.println("Added Event: " + eventparts[0]);
                                 break;
 
@@ -79,8 +114,8 @@ public class Yap {
                 continue;
             }
 
-                String command = input.split(" ")[0];
-                CommandType commandType = CommandType.fromString(command);
+            String command = input.split(" ")[0];
+            CommandType commandType = CommandType.fromString(command);
             if (CMD_ADD.matcher(input).matches()) {
                 addingTasks = true;
                 System.out.println("Add mode: enter tasks one per line. Type 'done' when finished.");
@@ -95,7 +130,7 @@ public class Yap {
             var mShow = CMD_SHOW.matcher(input);
             if (mShow.matches()) {
                 Integer n = mShow.group(1) == null ? null : Integer.parseInt(mShow.group(1));
-                show(memory, n);
+                show(n);
                 continue;
             }
 
@@ -107,14 +142,16 @@ public class Yap {
             var mComplete = CMD_COMPLETE.matcher(input);
             if(mComplete.matches()) {
                 String s = mComplete.group(1).trim();
-                complete(memory, s);
+                complete(s);
+                storage.save(tasks);
                 continue;
             }
 
             var mDelete = CMD_DELETE.matcher(input);
             if (mDelete.matches()) {
                 String s = mDelete.group(1).trim();
-                delete(memory, s);
+                delete(s);
+                storage.save(tasks);
                 continue;
             }
 
@@ -131,60 +168,38 @@ public class Yap {
 
     }
 
-    private static String ask(String prompt) {
-        while (true) {
-            String s = read(prompt + " ");
-            if (!s.isBlank()) return s.trim();
-            System.out.println("Please enter something.");
-        }
-    }
-
-    private static String read(String prompt) {
-        try {
-            System.out.print(prompt);
-            String s = sc.nextLine();
-            if (s == null || s.isBlank()) {
-                throw new IllegalArgumentException("Input cannot be empty.");
-            }
-            return s.trim();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return read(prompt);
-        }
-    }
-
-    private static void show(List<Task> memory, Integer taskNumber) {
-        if (memory.isEmpty()) {
+    private void show( Integer taskNumber) {
+        if (tasks.isEmpty()) {
             System.out.println("Memory is empty.");
             return;
         }
         if (taskNumber == null) {
-            for (int i = 0; i < memory.size(); i++) {
-                System.out.printf("%3d) %s%n", i + 1, memory.get(i));
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.printf("%3d) %s%n", i + 1, tasks.get(i));
             }
         } else {
-            if (taskNumber < 1 || taskNumber > memory.size()) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 System.out.println("Invalid task number.");
                 return;
             }
-            String task = memory.get(taskNumber - 1).toString();
+            String task = tasks.get(taskNumber - 1).toString();
             System.out.printf("%3d) %s%n", taskNumber, task);
         }
     }
 
-    private static void complete(List<Task> memory, String target) {
-        if (memory.isEmpty()) {
+    private void complete(String target) {
+        if (tasks.isEmpty()) {
             System.out.println("No tasks to complete.");
             return;
         }
 
         try {
             int idx = Integer.parseInt(target);
-            if (idx < 1 || idx > memory.size()) {
+            if (idx < 1 || idx > tasks.size()) {
                 System.out.println("Invalid task number: " + idx);
                 return;
             }
-            Task t = memory.get(idx - 1);
+            Task t = tasks.get(idx - 1);
             if (t.getStatus()) {
                 System.out.println("Already completed: " + t.getName());
             } else {
@@ -196,7 +211,7 @@ public class Yap {
         }
         try {
             String wanted = target.trim();
-            Task curr = memory.stream()
+            Task curr = tasks.stream()
                     .filter(t -> t.getName().equalsIgnoreCase(wanted))
                     .findFirst()
                     .orElse(null);
@@ -219,24 +234,24 @@ public class Yap {
         }
     }
 
-    private static void delete(List<Task> memory, String target) {
-        if (memory.isEmpty()) {
+    private void delete(String target) {
+        if (tasks.isEmpty()) {
             System.out.println("No tasks to delete.");
             return;
         }
 
         try {
             int idx = Integer.parseInt(target);
-            if (idx < 1 || idx > memory.size()) {
+            if (idx < 1 || idx > tasks.size()) {
                 System.out.println("Invalid task number: " + idx);
                 return;
             }
-            Task t = memory.remove(idx - 1);
+            Task t = tasks.remove(idx - 1);
             System.out.println("Deleted task: " + t.getName());
             return;
         } catch (NumberFormatException e) {
             String wanted = target.trim();
-            Task curr = memory.stream()
+            Task curr = tasks.stream()
                     .filter(t -> t.getName().equalsIgnoreCase(wanted))
                     .findFirst()
                     .orElse(null);
@@ -245,14 +260,14 @@ public class Yap {
                 System.out.println("Task not found: " + target);
                 return;
             }
-            memory.remove(curr);
+            tasks.remove(curr);
             System.out.println("Deleted task: " + curr.getName());
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
 
-    private static void help() {
+    private void help() {
         System.out.println("""
             Commands:
               show                   - display everything you've told me
