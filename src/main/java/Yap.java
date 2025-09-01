@@ -1,3 +1,4 @@
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,55 +7,34 @@ import java.util.NoSuchElementException;
 
 public class Yap {
 
-    private static final Scanner sc = new Scanner(System.in);
-    private static final Pattern NO = Pattern.compile("\\b(no|n|nah|nope)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Scanner SC = new Scanner(System.in);
+
+    private static final Pattern NO  = Pattern.compile("\\b(no|n|nah|nope)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern YES = Pattern.compile("\\b(yes|y|yeah|yup|sure)\\b", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern CMD_SHOW  = Pattern.compile("^show(?:\\s+(\\d+))?$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CMD_HELP  = Pattern.compile("^help$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CMD_EXIT  = Pattern.compile("^(exit|quit)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CMD_ADD  = Pattern.compile("^(add|todo)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CMD_DONE  = Pattern.compile("^(done)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_SHOW     = Pattern.compile("^show(?:\\s+(\\d+))?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_HELP     = Pattern.compile("^help$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_EXIT     = Pattern.compile("^(exit|quit)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_ADD      = Pattern.compile("^(add|todo)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_DONE     = Pattern.compile("^(done)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern CMD_COMPLETE = Pattern.compile("^complete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CMD_DELETE = Pattern.compile("^delete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CMD_DELETE   = Pattern.compile("^delete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
 
     private final List<Task> tasks = new ArrayList<>();
-    private final Storage storage = new Storage("data/duke.txt");
+    private final Storage storage = new Storage("../data/duke.txt");
 
     public static void main(String[] args) {
         new Yap().run();
     }
 
-    private String ask(String prompt) {
-        while (true) {
-            String s = read(prompt + " ");
-            if (!s.isBlank()) return s.trim();
-            System.out.println("Please enter something.");
-        }
-    }
-
-    private String read(String prompt) {
-        try {
-            System.out.print(prompt);
-            String s = sc.nextLine();
-            if (s == null || s.isBlank()) {
-                throw new IllegalArgumentException("Input cannot be empty.");
-            }
-            return s.trim();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return read(prompt);
-        }
-    }
-
     public void run() {
-
+        // Load existing tasks (Level 7)
         tasks.addAll(storage.load());
 
-        System.out.printf("Hello! I'm Yap your new best friend!\n");
+        System.out.printf("Hello! I'm Yap your new best friend!%n");
         String name = ask("May I know what's your name?");
-        System.out.printf("Hi %s, how may i help you today? :D\n", name);
-        System.out.println("for a list of available commands, type 'help' ");
+        System.out.printf("Hi %s, how may I help you today? :D%n", name);
+        System.out.println("For a list of available commands, type 'help'.");
 
         boolean addingTasks = false;
 
@@ -67,41 +47,71 @@ public class Yap {
                     System.out.println("Finished adding tasks.");
                 } else {
                     try {
-                        String cleanedInput = input.trim();
-                        char firstletter = cleanedInput.toLowerCase().charAt(0);
-                        TaskType taskType = TaskType.fromChar(firstletter);
+                        String cleaned = input.trim();
+                        if (cleaned.isEmpty()) {
+                            System.out.println("Please enter something.");
+                            continue;
+                        }
+                        char first = cleaned.toLowerCase().charAt(0);
+                        TaskType taskType = TaskType.fromChar(first);
 
                         switch (taskType) {
-                            case TODO:
-                                if (cleanedInput.charAt(1) != ' ') {
+                            case TODO: {
+                                if (cleaned.length() < 3 || cleaned.charAt(1) != ' ') {
                                     throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
                                 }
-                                String taskDetails = cleanedInput.substring(1).trim();
-                                tasks.add(new ToDos(taskDetails));
+                                String details = cleaned.substring(1).trim(); // "<name>"
+                                tasks.add(new ToDos(details));
                                 storage.save(tasks);
-                                System.out.println("Added ToDo task: " + taskDetails);
+                                System.out.println("Added ToDo task: " + details);
                                 break;
-                            case DEADLINE:
-                                if (cleanedInput.charAt(1) != ' ') {
+                            }
+                            case DEADLINE: {
+                                if (cleaned.length() < 3 || cleaned.charAt(1) != ' ') {
                                     throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
                                 }
-                                String deadlinetaskDetails = cleanedInput.substring(1).trim();
-                                String[] deadlineparts = deadlinetaskDetails.split("/");
-                                tasks.add(new Deadlines(deadlineparts[0], deadlineparts[1]));
-                                storage.save(tasks);
-                                System.out.println(("Added Deadline task: " + deadlineparts[0]));
+                                String details = cleaned.substring(1).trim(); // "<name>/<yyyy-MM-dd>"
+                                String[] parts = details.split("/", 2);
+                                if (parts.length < 2) {
+                                    System.out.println("Format: d <name>/<yyyy-MM-dd>  e.g., d return book/2019-12-02");
+                                    break;
+                                }
+                                String nm = parts[0].trim();
+                                String by = parts[1].trim();
+                                try {
+                                    tasks.add(new Deadlines(nm, by)); // parses yyyy-MM-dd
+                                    storage.save(tasks);
+                                    System.out.printf("Added Deadline task: %s (by %s)%n", nm, by);
+                                } catch (DateTimeParseException ex) {
+                                    System.out.println("Invalid date. Please use yyyy-MM-dd (e.g., 2019-12-02).");
+                                }
                                 break;
-                            case EVENT:
-                                if (cleanedInput.charAt(1) != ' ') {
+                            }
+                            case EVENT: {
+                                if (cleaned.length() < 3 || cleaned.charAt(1) != ' ') {
                                     throw new InvalidTaskTypeException("Unknown task type please re-enter based on the specified format");
                                 }
-                                String eventtaskDetails = cleanedInput.substring(1).trim();
-                                String[] eventparts = eventtaskDetails.split("/");
-                                tasks.add(new Events(eventparts[0], eventparts[1], eventparts[2], eventparts[3]));
-                                storage.save(tasks);
-                                System.out.println("Added Event: " + eventparts[0]);
+                                String details = cleaned.substring(1).trim(); // "<name>/<yyyy-MM-dd>/<HHmm>/<HHmm>"
+                                String[] parts = details.split("/", 4);
+                                if (parts.length < 4) {
+                                    System.out.println("Format: e <name>/<yyyy-MM-dd>/<HHmm>/<HHmm>  e.g., e meeting/2019-12-02/1800/2000");
+                                    break;
+                                }
+                                String nm = parts[0].trim();
+                                String date = parts[1].trim();
+                                String start = parts[2].trim();
+                                String end = parts[3].trim();
+                                try {
+                                    tasks.add(new Events(nm, date, start, end)); // parses date+times
+                                    storage.save(tasks);
+                                    System.out.printf("Added Event: %s (%s %s-%s)%n", nm, date, start, end);
+                                } catch (DateTimeParseException ex) {
+                                    System.out.println("Invalid date/time. Use yyyy-MM-dd and HHmm (e.g., 2019-12-02/1800/2000).");
+                                }
                                 break;
-
+                            }
+                            default:
+                                // no-op
                         }
                     } catch (InvalidTaskTypeException e) {
                         System.out.println(e.getMessage());
@@ -114,8 +124,6 @@ public class Yap {
                 continue;
             }
 
-            String command = input.split(" ")[0];
-            CommandType commandType = CommandType.fromString(command);
             if (CMD_ADD.matcher(input).matches()) {
                 addingTasks = true;
                 System.out.println("Add mode: enter tasks one per line. Type 'done' when finished.");
@@ -140,7 +148,7 @@ public class Yap {
             }
 
             var mComplete = CMD_COMPLETE.matcher(input);
-            if(mComplete.matches()) {
+            if (mComplete.matches()) {
                 String s = mComplete.group(1).trim();
                 complete(s);
                 storage.save(tasks);
@@ -163,14 +171,36 @@ public class Yap {
             } else {
                 System.out.println("Noted. Type 'show' to see the todo list; 'help' for commands.");
             }
-
         }
-
     }
 
-    private void show( Integer taskNumber) {
+    // ---------------------------------------------------------------------
+    // Helpers (instance methods; no statics)
+    // ---------------------------------------------------------------------
+
+    private String ask(String prompt) {
+        while (true) {
+            String s = read(prompt + " ");
+            if (!s.isBlank()) {
+                return s.trim();
+            }
+            System.out.println("Please enter something.");
+        }
+    }
+
+    private String read(String prompt) {
+        System.out.print(prompt);
+        String s = SC.nextLine();
+        if (s == null || s.isBlank()) {
+            System.out.println("Input cannot be empty.");
+            return read(prompt);
+        }
+        return s.trim();
+    }
+
+    private void show(Integer taskNumber) {
         if (tasks.isEmpty()) {
-            System.out.println("Memory is empty.");
+            System.out.println("Task list is empty.");
             return;
         }
         if (taskNumber == null) {
@@ -182,8 +212,7 @@ public class Yap {
                 System.out.println("Invalid task number.");
                 return;
             }
-            String task = tasks.get(taskNumber - 1).toString();
-            System.out.printf("%3d) %s%n", taskNumber, task);
+            System.out.printf("%3d) %s%n", taskNumber, tasks.get(taskNumber - 1));
         }
     }
 
@@ -207,8 +236,10 @@ public class Yap {
                 System.out.println("Completed: " + t.getName());
             }
             return;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
+            // fall through to by-name
         }
+
         try {
             String wanted = target.trim();
             Task curr = tasks.stream()
@@ -249,7 +280,11 @@ public class Yap {
             Task t = tasks.remove(idx - 1);
             System.out.println("Deleted task: " + t.getName());
             return;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
+            // fall through to by-name
+        }
+
+        try {
             String wanted = target.trim();
             Task curr = tasks.stream()
                     .filter(t -> t.getName().equalsIgnoreCase(wanted))
@@ -274,11 +309,12 @@ public class Yap {
               show N                 - display the last N entries
               exit / quit            - leave the chat
               add                    - add tasks to todolist
-              add todo task          - t "name"
-              add deadline task      - d "name"/"deadline"
-              add event              - e "name"/"date"/"start time"/"end time
-              complete task          - complete "name"/"number"
-              delete task            - delete "name"/"number"
+              add todo task          - t <name>
+              add deadline task      - d <name>/<yyyy-MM-dd>
+              add event              - e <name>/<yyyy-MM-dd>/<HHmm>/<HHmm>
+              complete task          - complete <name>|<number>
+              delete task            - delete <name>|<number>
             """);
     }
 }
+

@@ -1,36 +1,33 @@
 Hello! I'm Yap your new best friend!
-May I know what's your name? Hi kai, how may i help you today? :D
-for a list of available commands, type 'help'
+May I know what's your name? Hi Kai, how may I help you today? :D
+For a list of available commands, type 'help'.
 > Commands:
   show                   - display everything you've told me
   show N                 - display the last N entries
   exit / quit            - leave the chat
   add                    - add tasks to todolist
-  add todo task          - t "name"
-  add deadline task      - d "name"/"deadline"
-  add event              - e "name"/"date"/"start time"/"end time
-  complete task          - complete "name"/"number"
-  delete task            - delete "name"/"number"
+  add todo task          - t <name>
+  add deadline task      - d <name>/<yyyy-MM-dd>
+  add event              - e <name>/<yyyy-MM-dd>/<HHmm>/<HHmm>
+  complete task          - complete <name>|<number>
+  delete task            - delete <name>|<number>
 
 > Add mode: enter tasks one per line. Type 'done' when finished.
-> Added ToDo task: get food
-> Added Deadline task: homework
-> Added Event: basketball game
-> Unknown task type please re-enter based on the specified format
+> Added ToDo task: read book
+> Added Deadline task: return book (by 2019-12-02)
+> Added Event: project meeting (2019-12-02 1800-2000)
 > Finished adding tasks.
->   1) [T][ ] get food
-  2) [D][ ] homework (by: 9 Aug)
-  3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
-> Completed: get food
-> Completed: homework
-> Task not found: food
->   1) [T][X] get food
-  2) [D][X] homework (by: 9 Aug)
-  3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
->   3) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
-> Deleted task: get food
->   1) [D][X] homework (by: 9 Aug)
-  2) [E][ ] basketball game (from: 10 Aug 7pm to: 9pm)
-> Deleted task: basketball game
->   1) [D][X] homework (by: 9 Aug)
-> Alright, it was nice talking to you kai! See you next time :D
+>   1) [T][ ] read book
+  2) [D][ ] return book (by: Dec 02 2019)
+  3) [E][ ] project meeting (from: Dec 02 2019 6:00pm to: 8:00pm)
+>   2) [D][ ] return book (by: Dec 02 2019)
+> Completed: read book
+> Completed: project meeting
+> Deleted task: return book
+> Deleted task: read book
+> Add mode: enter tasks one per line. Type 'done' when finished.
+> Invalid date. Please use yyyy-MM-dd (e.g., 2019-12-02).
+> Invalid date/time. Use yyyy-MM-dd and HHmm (e.g., 2019-12-02/1800/2000).
+> Finished adding tasks.
+>   1) [E][X] project meeting (from: Dec 02 2019 6:00pm to: 8:00pm)
+> Alright, it was nice talking to you Kai! See you next time :D
