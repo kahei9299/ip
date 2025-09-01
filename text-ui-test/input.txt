@@ -1,19 +1,19 @@
-kai
+Kai
 help
 add
-t get food
-d homework/9 Aug
-e basketball game/10 Aug/7pm/9pm
-apple
+t read book
+d return book/2019-12-02
+e project meeting/2019-12-02/1800/2000
 done
 show
+show 2
 complete 1
-complete homework
-complete food
-show
-show 3
-delete 1
-show
+complete project meeting
 delete 2
+delete read book
+add
+d bad/2019-13-99
+e eventbad/2019-12-02/180x/2000
+done
 show
 exit

@@ -6,11 +6,17 @@ then
     mkdir ../bin
 fi
 
+# ensure data dirs exist and reset save files for deterministic tests
+mkdir -p ../data
+rm -f ../data/duke.txt
+mkdir -p ./data
+rm -f ./data/duke.txt
+
 # delete output from previous run
-if [ -e "./ACTUAL.TXT" ]
-then
-    rm ACTUAL.TXT
-fi
+# if [ -e "./ACTUAL.TXT" ]
+#then
+#    rm ACTUAL.TXT
+#fi
 
 # compile the code into the bin folder, terminates if error occurred
 if ! javac -cp ../src/main/java -Xlint:none -d ../bin ../src/main/java/*.java

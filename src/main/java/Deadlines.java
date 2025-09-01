@@ -1,17 +1,29 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Deadlines extends Task {
+    private static final DateTimeFormatter OUT_FMT = DateTimeFormatter.ofPattern("MMM dd yyyy");
 
-    private String deadline;
+    private final LocalDate by;
 
-    public Deadlines(String name, String deadline) {
+    /**
+     * Creates a deadline from a name and an ISO date string (yyyy-MM-dd).
+     *
+     * @param name  task name
+     * @param byStr deadline date in ISO format, e.g., "2019-12-02"
+     * @throws java.time.format.DateTimeParseException if byStr is not yyyy-MM-dd
+     */
+    public Deadlines(String name, String byStr) {
         super(name);
-        this.deadline = deadline;
+        this.by = LocalDate.parse(byStr); // expects yyyy-MM-dd
     }
 
-    public String getDeadline() {
-        return this.deadline;
+    public LocalDate getBy() {
+        return by;
     }
+
     @Override
     public String toString() {
-        return String.format("[D]" + super.toString() + " (by: %s)",deadline);
+        return String.format("[D]%s (by: %s)", super.toString(), by.format(OUT_FMT));
     }
 }
