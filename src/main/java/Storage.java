@@ -1,15 +1,18 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * saves and loads tasks from "./data/duke.txt".
+ * Saves and loads tasks from "./data/yap.txt".
  * Format (human-friendly, stable to parse):
  *   T | 1 | read book
  *   D | 0 | return book | 2019-12-02
@@ -28,14 +31,14 @@ public final class Storage {
         this.file = Paths.get(relativePath);
     }
 
-    /** Loads tasks from disk. Empty list if file missing or unreadable. */
-    public List<Task> load() {
+    /** Loads tasks from disk. Returns empty list if file missing. */
+    public List<Task> load() throws YapException {
         List<Task> out = new ArrayList<>();
         try {
             if (!Files.exists(file)) {
                 return out; // first run, nothing to load
             }
-            for (String line : Files.readAllLines(file)) {
+            for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
                 String raw = line.trim();
                 if (raw.isEmpty() || raw.startsWith("#")) {
                     continue;
@@ -46,26 +49,35 @@ public final class Storage {
                 }
             }
         } catch (IOException ex) {
-            System.err.println("Warning: failed to read " + file + ": " + ex.getMessage());
+            throw new YapException("Failed to read save file: " + file, ex);
         }
         return out;
     }
 
-    /** Saves tasks to disk. Creates parent directory if necessary. */
-    public void save(List<Task> tasks) {
+    /** Saves tasks to disk atomically. Creates parent directory if necessary. */
+    public void save(List<Task> tasks) throws YapException {
         try {
             Path parent = file.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            try (BufferedWriter w = Files.newBufferedWriter(file)) {
+
+            Path tmp = (parent == null ? Paths.get(".") : parent).resolve(file.getFileName() + ".tmp");
+
+            try (BufferedWriter w = Files.newBufferedWriter(tmp, StandardCharsets.UTF_8)) {
                 for (Task t : tasks) {
                     w.write(serialize(t));
                     w.newLine();
                 }
             }
+
+            try {
+                Files.move(tmp, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException ex) {
-            System.err.println("Warning: failed to save to " + file + ": " + ex.getMessage());
+            throw new YapException("Failed to write save file: " + file, ex);
         }
     }
 
@@ -74,26 +86,23 @@ public final class Storage {
     // ----------------------------------------------------------------------
 
     private static String serialize(Task t) {
-        String status = t.getStatus() ? "1" : "0"; // uses your existing Task#getStatus()
+        String status = t.getStatus() ? "1" : "0";
 
         if (t instanceof ToDos) {
             return join("T", status, t.getName());
 
         } else if (t instanceof Deadlines) {
             Deadlines d = (Deadlines) t;
-            // Store date as ISO yyyy-MM-dd
             return join("D", status, d.getName(), d.getBy().toString());
 
         } else if (t instanceof Events) {
             Events e = (Events) t;
-            // Store date as ISO yyyy-MM-dd; times as HHmm
             String dateIso = e.getDate().toString();
             String startHHmm = e.getStart().format(TIME_IO);
             String endHHmm = e.getEnd().format(TIME_IO);
             return join("E", status, e.getName(), dateIso, startHHmm, endHHmm);
         }
 
-        // Unknown type (shouldn't happen)
         return join("?", status, t.getName());
     }
 
@@ -102,7 +111,7 @@ public final class Storage {
                 .map(String::trim)
                 .toArray(String[]::new);
         if (parts.length < 3) {
-            return null; // corrupted
+            return null;
         }
 
         String type = parts[0];
@@ -121,7 +130,7 @@ public final class Storage {
                     if (parts.length < 4) {
                         return null;
                     }
-                    Deadlines d = new Deadlines(parts[2], parts[3]); // yyyy-MM-dd
+                    Deadlines d = new Deadlines(parts[2], parts[3]);
                     if ("1".equals(status)) {
                         d.setStatus(true);
                     }
@@ -131,17 +140,16 @@ public final class Storage {
                     if (parts.length < 6) {
                         return null;
                     }
-                    Events e = new Events(parts[2], parts[3], parts[4], parts[5]); // yyyy-MM-dd, HHmm, HHmm
+                    Events e = new Events(parts[2], parts[3], parts[4], parts[5]);
                     if ("1".equals(status)) {
                         e.setStatus(true);
                     }
                     return e;
                 }
                 default:
-                    return null; // unknown type
+                    return null;
             }
         } catch (RuntimeException ex) {
-            // Includes DateTimeParseException and others—skip corrupted line
             return null;
         }
     }

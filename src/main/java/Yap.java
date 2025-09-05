@@ -21,7 +21,7 @@ public class Yap {
     private static final Pattern CMD_DELETE   = Pattern.compile("^delete\\s+(.+)$", Pattern.CASE_INSENSITIVE);
 
     private final List<Task> tasks = new ArrayList<>();
-    private final Storage storage = new Storage("../data/duke.txt");
+    private final Storage storage = new Storage("../data/Yap.txt");
 
     public static void main(String[] args) {
         new Yap().run();
