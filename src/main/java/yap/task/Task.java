@@ -1,3 +1,5 @@
+package yap.task;
+
 public class Task {
 
     private String name;
