@@ -1,3 +1,5 @@
-T | 0 | buy food
+T | 1 | buy food
 D | 1 | homework | 2025-09-12
-E | 0 | basketball game | 2025-09-07 | 1600 | 1900
+E | 1 | basketball game | 2025-09-07 | 1600 | 1900
+T | 0 | buy food
+D | 0 | homework | 2005-05-12
