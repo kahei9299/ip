@@ -2,38 +2,45 @@ package yap.task;
 
 public class Task {
 
-    private String name;
-    private Boolean isdone;
+  private String name;
+  private Boolean isDone;
 
-    public Task(String name){
-        this.name = name;
-        this.isdone = false;
-    }
+  /** Creates a new task with the given name; tasks start as not done. */
+  public Task(String name) {
+    this.name = name;
+    this.isDone = false;
+  }
 
-    public String getName() {
-        return this.name;
-    }
-    public String getStatusIcon() {
-        return isdone ? "X" : " ";
-    }
+  /** Returns the user-facing name/description of this task. */
+  public String getName() {
+    return this.name;
+  }
 
-    public void setStatus(Boolean isdone) {
-        this.isdone = isdone;
-    }
+  /** Returns "X" if done, otherwise a single space. */
+  public String getStatusIcon() {
+    return isDone ? "X" : " ";
+  }
 
-    public Boolean getStatus() {
-        return isdone;
-    }
+  public void setStatus(Boolean isdone) {
+    this.isDone = isdone;
+  }
 
-    public boolean isDone() {
-        return Boolean.TRUE.equals(isdone);
-    }
+  public Boolean getStatus() {
+    return isDone;
+  }
 
-    public void markDone() {
-        this.isdone = true;
-    }
-    @Override
-    public String toString() {
-        return String.format("[%s] %s", this.getStatusIcon(), this.name);
-    }
+  /** Returns true if the task has been marked done. */
+  public boolean isDone() {
+    return Boolean.TRUE.equals(isDone);
+  }
+
+  /** Marks this task as done. */
+  public void markDone() {
+    this.isDone = true;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("[%s] %s", this.getStatusIcon(), this.name);
+  }
 }
