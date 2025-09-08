@@ -101,6 +101,10 @@ public class Yap {
             isExit = true;
             break;
 
+          case FIND:
+            handleFind(cmd.rest);
+            break;
+
           case UNKNOWN:
           default:
             if (inAddMode) {
@@ -126,6 +130,7 @@ public class Yap {
         "  delete <number|exact name>   - delete a task",
         "  complete <number|exact name> - mark a task done",
         "  help                         - show this help",
+        "  find <keyword>               - list tasks whose description contains the keyword",
         "  exit / quit                  - exit the program");
   }
 
@@ -141,35 +146,47 @@ public class Yap {
 
     switch (kind) {
       case 't':
-        {
-          if (payload.isEmpty()) throw new YapException("ToDo name is empty.");
-          Task t = new ToDos(payload);
-          tasks.add(t);
-          ui.showMessage("Added: " + t);
-          break;
-        }
+        if (payload.isEmpty()) throw new YapException("ToDo name is empty.");
+        Task t = new ToDos(payload);
+        tasks.add(t);
+        ui.showMessage("Added: " + t);
+        break;
       case 'd':
-        {
-          String[] parts = payload.split("/", 2);
-          if (parts.length != 2) throw new YapException("Deadline needs: d <name>/<yyyy-MM-dd>");
-          Task d = new Deadlines(parts[0].trim(), parts[1].trim());
-          tasks.add(d);
-          ui.showMessage("Added: " + d);
-          break;
-        }
+        String[] parts = payload.split("/", 2);
+        if (parts.length != 2) throw new YapException("Deadline needs: d <name>/<yyyy-MM-dd>");
+        Task d = new Deadlines(parts[0].trim(), parts[1].trim());
+        tasks.add(d);
+        ui.showMessage("Added: " + d);
+        break;
       case 'e':
-        {
-          String[] parts = payload.split("/", 4);
-          if (parts.length != 4)
-            throw new YapException("Event needs: e <name>/<yyyy-MM-dd>/<HHmm>/<HHmm>");
-          Task e = new Events(parts[0].trim(), parts[1].trim(), parts[2].trim(), parts[3].trim());
-          tasks.add(e);
-          ui.showMessage("Added: " + e);
-          break;
-        }
+        String[] eParts = payload.split("/", 4);
+        if (eParts.length != 4)
+          throw new YapException("Event needs: e <name>/<yyyy-MM-dd>/<HHmm>/<HHmm>");
+        Task e = new Events(eParts[0].trim(), eParts[1].trim(), eParts[2].trim(), eParts[3].trim());
+        tasks.add(e);
+        ui.showMessage("Added: " + e);
+        break;
       default:
         throw new YapException("Unknown add-line type. Use t/d/e.");
     }
+  }
+
+  private void handleFind(String keyword) {
+    if (keyword == null || keyword.trim().isEmpty()) {
+      ui.showLine();
+      ui.showMessage("Please provide a keyword. Usage: find <keyword>");
+      ui.showLine();
+      return;
+    }
+    java.util.List<Integer> hits = tasks.findIndices(keyword);
+    ui.showLine();
+    if (hits.isEmpty()) {
+      ui.showMessage("No matching tasks found.");
+    } else {
+      ui.showMessage("Here are the matching tasks in your list:");
+      ui.showMessage(tasks.renderByIndices(hits));
+    }
+    ui.showLine();
   }
 
   private void handleDelete(String arg) throws YapException {
@@ -214,6 +231,7 @@ public class Yap {
       return true;
     } catch (Exception e) {
       return false;
+    }
   }
 
   /**

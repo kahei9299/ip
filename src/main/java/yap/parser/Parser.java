@@ -2,7 +2,6 @@ package yap.parser;
 
 import java.util.Optional;
 
-
 /**
  * Parser interprets raw user input into structured commands.
  * <p>
@@ -20,6 +19,7 @@ public class Parser {
     COMPLETE,
     HELP,
     EXIT,
+    FIND,
     UNKNOWN
   }
 
@@ -34,12 +34,12 @@ public class Parser {
     }
   }
 
-   /**
-     * Parses raw user input into a Parsed representation.
-     *
-     * @param raw the raw input string
-     * @return a Parsed object containing command kind and remaining text
-     */
+  /**
+   * Parses raw user input into a Parsed representation.
+   *
+   * @param raw the raw input string
+   * @return a Parsed object containing command kind and remaining text
+   */
   public Parsed parse(String raw) {
     String s = Optional.ofNullable(raw).orElse("").trim();
     if (s.isEmpty()) return new Parsed(Kind.UNKNOWN, "");
@@ -60,7 +60,13 @@ public class Parser {
       return new Parsed(Kind.EXIT, "");
     } else if (lower.equals("done")) { // end add-mode
       return new Parsed(Kind.ADD, "done");
+    } else if (lower.startsWith("find ")) {
+      String keyword = s.substring(5).trim();
+      return new Parsed(Kind.FIND, keyword);
+    } else if (lower.equals("find")) {
+      return new Parsed(Kind.FIND, "");
     }
+
     return new Parsed(Kind.UNKNOWN, s);
   }
 }
