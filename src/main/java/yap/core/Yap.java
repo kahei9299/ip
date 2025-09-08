@@ -9,7 +9,13 @@ import yap.task.Task;
 import yap.task.TaskList;
 import yap.task.ToDos;
 
-/** Application entry point wiring UI, parser, and task list. */
+/**
+ * Entry point of the Yap application.
+ * <p>
+ * Responsibilities: initialize UI, Parser, and TaskList;
+ * start the main interaction loop with the user.
+ * Collaborators: interacts with Parser, TaskList, and UI.
+ */
 public class Yap {
 
   private final Storage storage;
@@ -208,7 +214,6 @@ public class Yap {
       return true;
     } catch (Exception e) {
       return false;
-    }
   }
 
   /**

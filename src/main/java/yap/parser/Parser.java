@@ -2,7 +2,14 @@ package yap.parser;
 
 import java.util.Optional;
 
-/** Parses raw user input into structured command intents. */
+
+/**
+ * Parser interprets raw user input into structured commands.
+ * <p>
+ * Responsibilities: trim and split input, recognize command keywords,
+ * and produce a Parsed object with command kind and payload.
+ * Collaborators: works with Parser.Kind and Parser.Parsed inner classes.
+ */
 public class Parser {
 
   public enum Kind {
@@ -27,12 +34,12 @@ public class Parser {
     }
   }
 
-  /**
-   * Parses a raw line into a command kind and payload.
-   *
-   * @param raw raw user input; null is treated as empty
-   * @return a Parsed result
-   */
+   /**
+     * Parses raw user input into a Parsed representation.
+     *
+     * @param raw the raw input string
+     * @return a Parsed object containing command kind and remaining text
+     */
   public Parsed parse(String raw) {
     String s = Optional.ofNullable(raw).orElse("").trim();
     if (s.isEmpty()) return new Parsed(Kind.UNKNOWN, "");
