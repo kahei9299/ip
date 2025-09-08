@@ -1,19 +1,16 @@
 package yap.core;
 
-import yap.task.TaskList;
-import yap.task.Task;
-import yap.task.ToDos;
-import yap.task.Deadlines;
-
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import yap.task.Task;
+import yap.task.TaskList;
 
 /**
- * Tests non-trivial behavior: add/remove/find/toggle completion, and boundary checks.
- * Adjust method names to your TaskList API.
+ * Tests non-trivial behavior: add/remove/find/toggle completion, and boundary checks. Adjust method
+ * names to your TaskList API.
  */
 public class TaskListTest {
 

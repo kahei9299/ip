@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 repositories {
@@ -37,6 +38,17 @@ shadowJar {
     archiveClassifier = null
 }
 
-run{
+spotless {
+    java {
+        googleJavaFormat('1.17.0') // stable formatter
+        // Keep imports tidy and deterministic
+        importOrder('java', 'javax', 'org', 'com', '') // '' = your project packages
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+run {
     standardInput = System.in
 }
