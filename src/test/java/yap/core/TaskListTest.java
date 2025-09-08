@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import yap.task.Task;
 import yap.task.TaskList;
+import yap.task.ToDos;
+import yap.task.Deadlines;
+import yap.task.Events;
 
 /**
  * Tests non-trivial behavior: add/remove/find/toggle completion, and boundary checks. Adjust method
