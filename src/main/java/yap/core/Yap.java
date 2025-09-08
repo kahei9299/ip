@@ -10,6 +10,13 @@ import yap.task.ToDos;
 import yap.task.Deadlines;
 import yap.task.Events;
 
+/**
+ * Entry point of the Yap application.
+ * <p>
+ * Responsibilities: initialize UI, Parser, and TaskList;
+ * start the main interaction loop with the user.
+ * Collaborators: interacts with Parser, TaskList, and UI.
+ */
 public class Yap {
 
     private final Storage storage;
@@ -19,6 +26,7 @@ public class Yap {
 
     private boolean inAddMode = false;
     private String userName = "friend";
+
 
     public Yap(String filePath) {
         ui = new Ui();
@@ -205,6 +213,11 @@ public class Yap {
         }
     }
 
+    /**
+     * Main method to launch the Yap application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         new Yap("data/tasks.txt").run();
     }

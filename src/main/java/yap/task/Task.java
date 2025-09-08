@@ -1,5 +1,13 @@
 package yap.task;
 
+/**
+ * Abstract base class representing a generic Task.
+ * <p>
+ * Responsibilities: store task name and completion state,
+ * and provide core behaviours common to all tasks.
+ * Collaborators: extended by ToDos, Deadlines, and Events.
+ */
+
 public class Task {
 
     private String name;
@@ -10,6 +18,11 @@ public class Task {
         this.isdone = false;
     }
 
+    /**
+     * Returns the name/description of the task.
+     *
+     * @return the task name
+     */
     public String getName() {
         return this.name;
     }
@@ -25,10 +38,9 @@ public class Task {
         return isdone;
     }
 
-    public boolean isDone() {
-        return Boolean.TRUE.equals(isdone);
-    }
-
+    /**
+     * Marks this task as completed.
+     */
     public void markDone() {
         this.isdone = true;
     }
