@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public class Parser {
 
-    public enum Kind { LIST, SHOW, ADD, DELETE, COMPLETE, HELP, EXIT, UNKNOWN }
+    public enum Kind { LIST, SHOW, ADD, DELETE, COMPLETE, HELP, EXIT, FIND, UNKNOWN }
 
     public static class Parsed {
         public final Kind kind;
@@ -32,6 +32,11 @@ public class Parser {
             return new Parsed(Kind.EXIT, "");
         } else if (lower.equals("done")) { // end add-mode
             return new Parsed(Kind.ADD, "done");
+        } else if (lower.startsWith("find ")) {
+            String keyword = s.substring(5).trim();
+            return new Parsed(Kind.FIND, keyword);
+        } else if (lower.equals("find")) {
+            return new Parsed(Kind.FIND, "");
         }
         return new Parsed(Kind.UNKNOWN, s);
     }

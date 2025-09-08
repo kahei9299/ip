@@ -36,4 +36,20 @@ public class ParserTest {
         // assertThrows(YapException.class, () -> Parser.parse("nonsense command"));
         assertTrue(true);
     }
+
+    @Test
+    void parsesFindWithKeyword() {
+        Parser p = new Parser();
+        Parser.Parsed res = p.parse("find book");
+        assertEquals(Parser.Kind.FIND, res.kind);
+        assertEquals("book", res.rest);
+    }
+
+    @Test
+    void parsesFindWithoutKeyword() {
+        Parser p = new Parser();
+        Parser.Parsed res = p.parse("find");
+        assertEquals(Parser.Kind.FIND, res.kind);
+        assertEquals("", res.rest);
+    }
 }

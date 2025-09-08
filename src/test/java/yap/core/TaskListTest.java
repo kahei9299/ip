@@ -52,4 +52,25 @@ public class TaskListTest {
         // assertTrue(tasks.get(0).isDone());
         assertTrue(true);
     }
+
+    @Test
+    void findIndices_matchesCaseInsensitively() {
+        TaskList list = new TaskList();
+        list.add(new ToDos("read book"));
+        list.add(new Deadlines("return book", "2019-06-06"));
+        list.add(new ToDos("exercise"));
+
+        var hits = list.findIndices("Book");
+        assertEquals(2, hits.size());
+        assertEquals(1, (int) hits.get(0));
+        assertEquals(2, (int) hits.get(1));
+    }
+
+    @Test
+    void renderByIndices_formatsWithNumbers() {
+        TaskList list = new TaskList();
+        list.add(new ToDos("read book"));
+        var out = list.renderByIndices(java.util.List.of(1));
+        assertTrue(out.startsWith("1.[T]")); // depends on your Task.toString()
+    }
 }

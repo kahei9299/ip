@@ -94,6 +94,10 @@ public class Yap {
                         isExit = true;
                         break;
 
+                    case FIND:
+                        handleFind(cmd.rest);
+                        break;
+
                     case UNKNOWN:
                     default:
                         if (inAddMode) {
@@ -118,6 +122,7 @@ public class Yap {
                 "  delete <number|exact name>   - delete a task",
                 "  complete <number|exact name> - mark a task done",
                 "  help                         - show this help",
+                "  find <keyword>               - list tasks whose description contains the keyword",
                 "  exit / quit                  - exit the program");
     }
 
@@ -205,7 +210,28 @@ public class Yap {
         }
     }
 
+    private void handleFind(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            ui.showLine();
+            ui.showMessage("Please provide a keyword. Usage: find <keyword>");
+            ui.showLine();
+            return;
+        }
+        java.util.List<Integer> hits = tasks.findIndices(keyword);
+        ui.showLine();
+        if (hits.isEmpty()) {
+            ui.showMessage("No matching tasks found.");
+        } else {
+            ui.showMessage("Here are the matching tasks in your list:");
+            ui.showMessage(tasks.renderByIndices(hits));
+        }
+        ui.showLine();
+    }
+
+
     public static void main(String[] args) {
         new Yap("data/tasks.txt").run();
     }
+
+
 }
