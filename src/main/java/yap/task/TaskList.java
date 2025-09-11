@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Maintains an ordered list of {@link Task} objects and provides
- * operations to add, remove, access, and render tasks for display.
- * <p>
- * Responsibilities: storage, 1-based access semantics, string rendering.
- * Collaborators: {@link Task} and its subclasses.
+ * Maintains an ordered list of {@link Task} objects and provides operations to add, remove, access,
+ * and render tasks for display.
+ *
+ * <p>Responsibilities: storage, 1-based access semantics, string rendering. Collaborators: {@link
+ * Task} and its subclasses.
  */
 public class TaskList {
-  
+
   private final List<Task> tasks;
 
   public TaskList() {

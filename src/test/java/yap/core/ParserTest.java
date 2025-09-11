@@ -1,11 +1,13 @@
 package yap.core;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import yap.parser.Parser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import yap.parser.Parser;
 
 /**
  * Tests a non-trivial Parser method that converts raw user input into a Command (or an internal
@@ -31,26 +33,26 @@ public class ParserTest {
     assertTrue(true);
   }
 
-    @Test
-    void parse_invalidCommand_throws() {
-        // Replace YapException with your project’s exception type.
-        // assertThrows(YapException.class, () -> Parser.parse("nonsense command"));
-        assertTrue(true);
-    }
+  @Test
+  void parse_invalidCommand_throws() {
+    // Replace YapException with your project’s exception type.
+    // assertThrows(YapException.class, () -> Parser.parse("nonsense command"));
+    assertTrue(true);
+  }
 
-    @Test
-    void parsesFindWithKeyword() {
-        Parser p = new Parser();
-        Parser.Parsed res = p.parse("find book");
-        assertEquals(Parser.Kind.FIND, res.kind);
-        assertEquals("book", res.rest);
-    }
+  @Test
+  void parsesFindWithKeyword() {
+    Parser p = new Parser();
+    Parser.Parsed res = p.parse("find book");
+    assertEquals(Parser.Kind.FIND, res.kind);
+    assertEquals("book", res.rest);
+  }
 
-    @Test
-    void parsesFindWithoutKeyword() {
-        Parser p = new Parser();
-        Parser.Parsed res = p.parse("find");
-        assertEquals(Parser.Kind.FIND, res.kind);
-        assertEquals("", res.rest);
-    }
+  @Test
+  void parsesFindWithoutKeyword() {
+    Parser p = new Parser();
+    Parser.Parsed res = p.parse("find");
+    assertEquals(Parser.Kind.FIND, res.kind);
+    assertEquals("", res.rest);
+  }
 }

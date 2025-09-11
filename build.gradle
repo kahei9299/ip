@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.diffplug.spotless' version '6.25.0'
+    id 'checkstyle'
 }
 
 repositories {
@@ -38,11 +39,14 @@ shadowJar {
     archiveClassifier = null
 }
 
+checkstyle {
+    toolVersion = '11.0.0'
+}
+
 spotless {
     java {
-        googleJavaFormat('1.17.0') // stable formatter
-        // Keep imports tidy and deterministic
-        importOrder('java', 'javax', 'org', 'com', '') // '' = your project packages
+        googleJavaFormat('1.17.0')
+        importOrder('java', 'javax', 'org', 'com', '')
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

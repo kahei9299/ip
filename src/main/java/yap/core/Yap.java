@@ -11,10 +11,9 @@ import yap.task.ToDos;
 
 /**
  * Entry point of the Yap application.
- * <p>
- * Responsibilities: initialize UI, Parser, and TaskList;
- * start the main interaction loop with the user.
- * Collaborators: interacts with Parser, TaskList, and UI.
+ *
+ * <p>Responsibilities: initialize UI, Parser, and TaskList; start the main interaction loop with
+ * the user. Collaborators: interacts with Parser, TaskList, and UI.
  */
 public class Yap {
 

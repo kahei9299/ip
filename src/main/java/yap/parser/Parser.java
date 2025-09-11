@@ -4,10 +4,10 @@ import java.util.Optional;
 
 /**
  * Parser interprets raw user input into structured commands.
- * <p>
- * Responsibilities: trim and split input, recognize command keywords,
- * and produce a Parsed object with command kind and payload.
- * Collaborators: works with Parser.Kind and Parser.Parsed inner classes.
+ *
+ * <p>Responsibilities: trim and split input, recognize command keywords, and produce a Parsed
+ * object with command kind and payload. Collaborators: works with Parser.Kind and Parser.Parsed
+ * inner classes.
  */
 public class Parser {
 
