@@ -15,6 +15,7 @@ public class Parser {
     LIST,
     SHOW,
     ADD,
+    EDIT,
     DELETE,
     COMPLETE,
     HELP,
@@ -51,7 +52,10 @@ public class Parser {
       return new Parsed(Kind.SHOW, "");
     } else if (lower.startsWith("add")) {
       return new Parsed(Kind.ADD, s.substring(3).trim()); // supports your add-mode trigger
-    } else if (lower.startsWith("delete")) {
+    }  else if (lower.equals("edit") || lower.matches("^edit\\s+.*")) {
+    String rest = lower.equals("edit") ? "" : s.replaceFirst("(?i)^edit\\s+", "").trim();
+    return new Parsed(Kind.EDIT, rest);
+  } else if (lower.startsWith("delete")) {
       return new Parsed(Kind.DELETE, s.substring(6).trim());
     } else if (lower.startsWith("complete") || lower.startsWith("done ")) {
       String rest = lower.startsWith("done ") ? s.substring(4).trim() : s.substring(8).trim();
@@ -68,7 +72,6 @@ public class Parser {
     } else if (lower.equals("find")) {
       return new Parsed(Kind.FIND, "");
     }
-
     return new Parsed(Kind.UNKNOWN, s);
   }
 }

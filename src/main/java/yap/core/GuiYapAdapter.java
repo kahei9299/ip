@@ -32,6 +32,8 @@ public final class GuiYapAdapter {
     private final Method mHandleDelete;
     private final Method mHandleComplete;
     private final Method mHandleFind;
+    private final Method mHandleEdit;
+
 
     private boolean nameSet = false;
     private boolean exitRequested = false;
@@ -65,6 +67,8 @@ public final class GuiYapAdapter {
             mHandleDelete.setAccessible(true);
             mHandleComplete.setAccessible(true);
             mHandleFind.setAccessible(true);
+            mHandleEdit = Yap.class.getDeclaredMethod("handleEdit", String.class);
+            mHandleEdit.setAccessible(true);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Reflection wiring failed: " + e.getMessage(), e);
         }
@@ -197,6 +201,18 @@ public final class GuiYapAdapter {
                     mHandleFind.invoke(yap, cmd.rest);
                     break;
                 }
+
+                case EDIT: {
+                    // call the same helper your CLI uses
+                    mHandleEdit.invoke(yap, cmd.rest);
+
+                    // then persist, exactly like CLI does after EDIT
+                    yap.io.Storage.class
+                            .getMethod("save", java.util.List.class)
+                            .invoke(storage, tasks.all());
+                    break;
+                }
+
                 case UNKNOWN:
                 default: {
                     boolean inAddMode = fInAddMode.getBoolean(yap);

@@ -8,7 +8,7 @@ package yap.task;
  */
 public class Task {
 
-  private final String name;
+  private String name;
   private boolean isDone;
 
   /** Creates a new task with the given name; tasks start as not done. */
@@ -53,6 +53,10 @@ public class Task {
   public void markDone() {
 
     this.isDone = true;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   @Override
