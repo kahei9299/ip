@@ -8,8 +8,8 @@ package yap.task;
  */
 public class Task {
 
-  private String name;
-  private Boolean isDone;
+  private final String name;
+  private boolean isDone;
 
   /** Creates a new task with the given name; tasks start as not done. */
   public Task(String name) {
@@ -33,7 +33,6 @@ public class Task {
   /** Returns "X" if done, otherwise a single space. */
   public String getStatusIcon() {
 
-    assert isDone != null : "isDone flag must be initialized";
     return isDone ? "X" : " ";
   }
 
@@ -53,7 +52,6 @@ public class Task {
   /** Marks this task as completed. */
   public void markDone() {
 
-    assert isDone != null : "isDone must be initialized";
     this.isDone = true;
   }
 
