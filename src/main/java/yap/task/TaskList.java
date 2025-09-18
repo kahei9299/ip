@@ -19,6 +19,9 @@ public class TaskList {
   }
 
   public TaskList(List<Task> initial) {
+
+    assert initial != null : "Initial task list must not be null";
+    for (Task t : initial) assert t != null : "Initial task list contains null task";
     this.tasks = new ArrayList<>(initial);
   }
 
@@ -28,6 +31,8 @@ public class TaskList {
    * @return number of tasks
    */
   public int size() {
+
+    assert tasks != null : "tasks list not initialized";
     return tasks.size();
   }
 
@@ -39,7 +44,10 @@ public class TaskList {
    * @throws IndexOutOfBoundsException if the index is invalid
    */
   public Task get(int index1Based) {
-    return tasks.get(index1Based - 1);
+    assert index1Based >= 1 && index1Based <= size() : "1-based index out of range: " + index1Based;
+    Task t = tasks.get(index1Based - 1);
+    assert t != null : "Stored task is null";
+    return t;
   }
 
   /**
@@ -48,6 +56,8 @@ public class TaskList {
    * @param t the task to add
    */
   public void add(Task t) {
+
+    assert t != null : "Cannot add null task";
     tasks.add(t);
   }
 
@@ -59,7 +69,10 @@ public class TaskList {
    * @throws IndexOutOfBoundsException if the index is invalid
    */
   public Task remove(int index1Based) {
-    return tasks.remove(index1Based - 1);
+    assert index1Based >= 1 && index1Based <= size() : "1-based index out of range: " + index1Based;
+    Task removed = tasks.remove(index1Based - 1);
+    assert removed != null : "Removed task unexpectedly null";
+    return removed;
   }
 
   public List<Task> all() {

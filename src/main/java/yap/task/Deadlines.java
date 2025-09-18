@@ -18,7 +18,9 @@ public class Deadlines extends Task {
    */
   public Deadlines(String name, String byStr) {
     super(name);
+    assert byStr != null && !byStr.isBlank() : "Deadline date string must be present";
     this.by = LocalDate.parse(byStr); // expects yyyy-MM-dd
+    assert by != null : "Parsed deadline date is null";
   }
 
   /** Returns the due date. */

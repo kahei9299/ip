@@ -27,9 +27,11 @@ public class Events extends Task {
    */
   public Events(String name, String dateStr, String startStr, String endStr) {
     super(name);
+    assert dateStr != null && startStr != null && endStr != null : "Event fields must be present";
     this.date = LocalDate.parse(dateStr); // yyyy-MM-dd
     this.start = LocalTime.parse(startStr, TIME_IN); // HHmm
     this.end = LocalTime.parse(endStr, TIME_IN); // HHmm
+    assert !end.isBefore(start) : "Event end must not be before start";
   }
 
   public LocalDate getDate() {
