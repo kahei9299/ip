@@ -6,15 +6,15 @@ import java.time.format.DateTimeFormatter;
 
 /** A scheduled event with a date, start time, and end time. */
 public class Events extends Task {
-  private static final DateTimeFormatter DATE_OUT = DateTimeFormatter.ofPattern("MMM dd yyyy");
-  private static final DateTimeFormatter TIME_IN =
+  private static  DateTimeFormatter DATE_OUT = DateTimeFormatter.ofPattern("MMM dd yyyy");
+  private static  DateTimeFormatter TIME_IN =
       DateTimeFormatter.ofPattern("HHmm"); // e.g., 1800
-  private static final DateTimeFormatter TIME_OUT =
+  private static  DateTimeFormatter TIME_OUT =
       DateTimeFormatter.ofPattern("h:mma"); // e.g., 6:00PM
 
-  private final LocalDate date;
-  private final LocalTime start;
-  private final LocalTime end;
+  private LocalDate date;
+  private LocalTime start;
+  private LocalTime end;
 
   /**
    * Creates an event from a name, ISO date, and HHmm start/end times.
@@ -32,6 +32,17 @@ public class Events extends Task {
     this.start = LocalTime.parse(startStr, TIME_IN); // HHmm
     this.end = LocalTime.parse(endStr, TIME_IN); // HHmm
     assert !end.isBefore(start) : "Event end must not be before start";
+  }
+
+  public void setDate(LocalDate date) { this.date = date; }
+  public void setDate(String iso) {
+    this.date = LocalDate.parse(iso, DateTimeFormatter.ISO_LOCAL_DATE);
+  }
+  public void setStart(String hhmm) {
+    this.start = LocalTime.parse(hhmm, DateTimeFormatter.ofPattern("HHmm"));
+  }
+  public void setEnd(String hhmm) {
+    this.end = LocalTime.parse(hhmm, DateTimeFormatter.ofPattern("HHmm"));
   }
 
   public LocalDate getDate() {

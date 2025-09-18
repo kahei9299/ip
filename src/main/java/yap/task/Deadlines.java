@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class Deadlines extends Task {
   private static final DateTimeFormatter OUT_FMT = DateTimeFormatter.ofPattern("MMM dd yyyy");
 
-  private final LocalDate by;
+  private LocalDate by;
 
   /**
    * Creates a deadline from a name and an ISO date string (yyyy-MM-dd).
@@ -26,6 +26,11 @@ public class Deadlines extends Task {
   /** Returns the due date. */
   public LocalDate getBy() {
     return by;
+  }
+
+  public void setBy(LocalDate by) { this.by = by; }
+  public void setBy(String iso) {
+    this.by = LocalDate.parse(iso, DateTimeFormatter.ISO_LOCAL_DATE);
   }
 
   @Override
