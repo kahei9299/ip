@@ -29,6 +29,8 @@ public class Parser {
     public final String rest; // whatever follows the command
 
     public Parsed(Kind kind, String rest) {
+      assert kind != null : "Parsed.kind must not be null";
+      assert rest != null : "Parsed.rest must not be null";
       this.kind = kind;
       this.rest = rest;
     }

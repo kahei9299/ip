@@ -13,6 +13,8 @@ public class Task {
 
   /** Creates a new task with the given name; tasks start as not done. */
   public Task(String name) {
+
+    assert name != null && !name.isBlank() : "Task name must be non-null, non-blank";
     this.name = name;
     this.isDone = false;
   }
@@ -23,11 +25,15 @@ public class Task {
    * @return the task name
    */
   public String getName() {
+
+    assert this.name != null : "Task name unexpectedly null";
     return this.name;
   }
 
   /** Returns "X" if done, otherwise a single space. */
   public String getStatusIcon() {
+
+    assert isDone != null : "isDone flag must be initialized";
     return isDone ? "X" : " ";
   }
 
@@ -46,6 +52,8 @@ public class Task {
 
   /** Marks this task as completed. */
   public void markDone() {
+
+    assert isDone != null : "isDone must be initialized";
     this.isDone = true;
   }
 
