@@ -1,30 +1,51 @@
-# Duke User Guide
+# Yap Task Manager
 
-// Update the title above to match the actual product name
+> “Productivity is never an accident. It is always the result of a commitment to excellence.” – Paul J. Meyer
 
-// Product screenshot goes here
+Yap helps you **organise** and *track* your tasks with ease. It’s,
 
-// Product intro goes here
+- text-based
+- simple to use
+- ~~boring~~ **fun** to try
+- lightning fast ⚡
 
-## Adding deadlines
+All you need to do is,
 
-// Describe the action and its outcome.
+1. Download it from [here](https://github.com/kahei9299/ip).
+2. Run it using `./gradlew run`.
+3. Add your tasks.
+4. Let Yap manage your to-do list for you 😉
 
-// Give examples of usage
+---
 
-Example: `keyword (optional arguments)`
+## Features
+- Managing tasks
+- Managing deadlines
+- Managing events
+- Searching tasks with `find`
 
-// A description of the expected outcome goes here
+---
 
-```
-expected output
-```
+### Coming Soon
+- [ ] Reminders
+- [ ] Notifications
+- [x] Add tasks
+- [x] Delete tasks
 
-## Feature ABC
+---
 
-// Feature details
+### Example Usage
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        new Yap("data/tasks.txt").run();
+    }
+}
 
 
-## Feature XYZ
+## Product Screenshot
 
-// Feature details
+Here’s the full GUI of the application:
+
+![Ui Screenshot](Ui.png)
